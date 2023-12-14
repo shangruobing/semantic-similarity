@@ -1,0 +1,1635 @@
+{
+    "出行类":{
+        "1": {
+            "name": "phone.actions.GetDirections",
+            "description": "输入描述:目标地址;描述摘要:在您选择的地图上显示到目标地址的路线。",
+            "inputParams": [
+                {
+                    "paramName": "source",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToCurrentLocation",
+                    "required": false,
+                    "description": "出发地;默认参数:当前地址"
+                },
+                {
+                    "paramName": "destination",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "目的地"
+                },
+                {
+                    "paramName": "mode",
+                    "paramType": "string",
+                    "defaultValue": "Driving",
+                    "required": false,
+                    "description": "模式;默认参数:驾驶;可选参数:驾驶(Driving)、步行(Walking)、公共交通(PublicTrans)"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "route",
+                    "paramType": "CPAction",
+                    "description": "当前耗时最短路线"
+                }
+            ]
+        },
+        "2": {
+            "name": "phone.actions.SearchLocalFacilities",
+            "description": "输入描述:要搜索的位置。;描述摘要:搜索附近的设施。",
+            "inputParams": [
+                {
+                    "paramName": "source",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToCurrentLocation",
+                    "required": false,
+                    "description": "出发地;默认参数:当前地址"
+                },
+                {
+                    "paramName": "query",
+                    "paramType": "string",
+                    "defaultValue": "停车场",
+                    "required": false,
+                    "description": "搜索关键词;默认参数:停车场;可选参数:停车场、商场、餐馆"
+                },
+                {
+                    "paramName": "radius",
+                    "paramType": "CPDistance",
+                    "defaultValue": "1000m",
+                    "required": false,
+                    "description": "搜索半径(米);默认参数:1000"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "searchResult",
+                    "paramType": "List<string>",
+                    "description": "返回前5个相关设施"
+                }
+            ]
+        },
+        "3": {
+            "name": "phone.actions.RequestRide",
+            "description": "描述摘要:叫车服务，请求从指定的上车地点乘车到指定的下车地点。",
+            "inputParams": [
+                {
+                    "paramName": "app",
+                    "paramType": "CPApp",
+                    "defaultValue": "DefaultToApp",
+                    "required": false,
+                    "description": "叫车服务应用程序"
+                },
+                {
+                    "paramName": "pickupLocation",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToCurrentLocation",
+                    "required": false,
+                    "description": "上车地点"
+                },
+                {
+                    "paramName": "dropOffLocation",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "下车地点"
+                },
+                {
+                    "paramName": "rideType",
+                    "paramType": "string",
+                    "defaultValue": "commonRide",
+                    "required": false,
+                    "description": "车辆类型;默认参数:普通汽车(commonRide)、高级汽车(highRide)"
+                },
+                {
+                    "paramName": "partySize",
+                    "paramType": "number",
+                    "defaultValue": 1,
+                    "required": false,
+                    "description": "上车人数;默认参数:1"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "string",
+                    "description": "叫车确认"
+                }
+            ]
+        },
+        "4": {
+            "name": "phone.actions.GetCurrentLocation",
+            "description": "描述摘要: 获取设备当前所在位置",
+            "inputParams": [
+                {
+                    "paramName": "precision",
+                    "paramType": "CPEnumPrecision",
+                    "defaultValue": "best",
+                    "required": false,
+                    "description": "精确度,最佳、附近十米、附近一百米、附近一公里、附近三公里"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "currentLocation",
+                    "paramType": "CPLocation",
+                    "description": "位置"
+                }
+            ]
+        },
+        "5": {
+            "name": "phone.scenes.Arrive",
+            "description": "描述摘要: 判断是否到达某地(如办公室）",
+            "inputParams": [
+                {
+                    "paramName": "location",
+                    "paramType": "CPLocation",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "如果到达某地(如办公室)，则继续执行后面内容"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "6": {
+            "name": "phone.scenes.Leave",
+            "description": "描述摘要: 判断是否离开某地(如办公室）",
+            "inputParams": [
+                {
+                    "paramName": "location",
+                    "paramType": "CPLocation",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "如果离开某地(如办公室)，则继续执行后面内容"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "7": {
+            "name": "phone.scenes.CarPlay",
+            "description": "描述摘要: 当满足`切换CarPlay`场景时",
+            "inputParams": [
+                {
+                    "paramName": "carPlayState",
+                    "paramType": "CPEnumCarPlayState",
+                    "defaultValue": "open",
+                    "required": false,
+                    "description": "当满足`切换CarPlay`场景时，设置状态,可选值为打开(open)，关闭(close)"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        }
+    },
+    "多媒体类":{
+        "1": {
+            "name": "phone.actions.PlayMusic",
+            "description": "输入描述:要播放的音乐;描述摘要:使用音乐应用程序播放音乐。",
+            "inputParams": [
+                {
+                    "paramName": "music",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToFirstAlbum",
+                    "required": false,
+                    "description": "音乐名称，默认第一首专辑音乐"
+                },
+                {
+                    "paramName": "mode",
+                    "paramType": "string",
+                    "defaultValue": "shuffle",
+                    "required": false,
+                    "description": "播放模式;默认参数:随机;可选参数:随机(shuffle)、重复(repeat)、循环(loop)、推荐(recommend)"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "playResult",
+                    "paramType": "CPAction",
+                    "description": "播放音乐动作"
+                }
+            ]
+        },
+        "2": {
+            "name": "phone.actions.FilterMusic",
+            "description": "描述摘要:从音乐资料库中筛选音乐。",
+            "inputParams": [
+                {
+                    "paramName": "sortProperty",
+                    "paramType": "string",
+                    "defaultValue": "演唱者",
+                    "required": false,
+                    "description": "排序属性;可选参数:演唱者、作曲者、添加日期、持续时间、播放次数"
+                },
+                {
+                    "paramName": "sortValue",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "排序的属性值"
+                },
+                {
+                    "paramName": "sortOrder",
+                    "paramType": "string",
+                    "defaultValue": "升序",
+                    "required": false,
+                    "description": "排序顺序;可选参数:升序(aesc)、降序(desc)"
+                },
+                {
+                    "paramName": "limitEnabled",
+                    "paramType": "boolean",
+                    "defaultValue": false,
+                    "required": false,
+                    "description": "返回是否限制"
+                },
+                {
+                    "paramName": "limitNumber",
+                    "paramType": "number",
+                    "defaultValue": 5,
+                    "required": false,
+                    "description": "返回限制个数"
+                },
+                {
+                    "paramName": "playlist",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "要筛选的播放列表"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "filterResult",
+                    "paramType": "List<CPMusic>",
+                    "description": "筛选出的音乐列表"
+                }
+            ]
+        },
+        "3": {
+            "name": "phone.actions.CreatePlaylist",
+            "description": "输入描述:音乐库中的项目;描述摘要:在音乐应用程序中创建一个新的播放列表，将作为输入传递的任何项目添加到新播放列表中。",
+            "inputParams": [
+                {
+                    "paramName": "playlistName",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "播放列表名称"
+                },
+                {
+                    "paramName": "music",
+                    "paramType": "List<CPMusic>",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "音乐"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "string",
+                    "description": "创建成功或失败消息"
+                }
+            ]
+        },
+        "4": {
+            "name": "phone.actions.GetCurrentSong",
+            "description": "描述摘要:返回当前音乐app中播放的音乐。",
+            "inputParams": [],
+            "outputParams": [
+                {
+                    "paramName": "song",
+                    "paramType": "CPMusic",
+                    "description": "当前音乐app中播放的音乐"
+                }
+            ]
+        },
+        "5": {
+            "name": "phone.actions.AddToPlaylist",
+            "description": "描述摘要:将输入的音乐添加到指定播放列表。",
+            "inputParams": [
+               {
+                    "paramName": "playlist",
+                    "paramType": "string",
+                    "defaultValue": "DefaultPlaylist",
+                    "required": false,
+                    "description": "要添加的播放列表"
+               },
+               {
+                    "paramName": "music",
+                    "paramType": "CPMusic",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "要添加的音乐"
+               }
+            ],
+            "outputParams": []
+        },
+        "6": {
+            "name": "phone.actions.GetPlaylist",
+            "description": "描述摘要:获取指定播放列表中的每首歌曲.",
+            "inputParams": [
+                {
+                    "paramName": "playlist",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "播放列表名称"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "playlist",
+                    "paramType": "List<CPMusic>",
+                    "description": "返回音乐列表"
+                }
+            ]
+        },
+        "7": {
+            "name": "phone.actions.GetLastPhoto",
+            "description": "描述摘要:从照片库中获取最近的照片。",
+            "inputParams": [
+                {
+                    "paramName": "numberOfPhotos",
+                    "paramType": "number",
+                    "defaultValue": 5,
+                    "required": false,
+                    "description": "照片数量"
+                },
+                {
+                    "paramName": "includeScreenshots",
+                    "paramType": "boolean",
+                    "defaultValue": false,
+                    "required": false,
+                    "description": "是否包括屏幕截图"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "photoResult",
+                    "paramType": "List<CPImage>",
+                    "description": "返回照片列表"
+                }
+            ]
+        },
+        "8": {
+            "name": "phone.actions.MakeGif",
+            "description": "输出结果描述:动画GIF;描述摘要:从传递到动作中的图像或视频创建动画GIF。",
+            "inputParams": [
+                {
+                    "paramName": "secondsPerPhoto",
+                    "paramType": "number",
+                    "defaultValue": 0.2,
+                    "required": true,
+                    "description": "每张照片的秒数"
+                },
+                {
+                    "paramName": "loopForever",
+                    "paramType": "boolean",
+                    "defaultValue": true,
+                    "required": false,
+                    "description": "永远循环"
+                },
+                {
+                    "paramName": "numbertOfLoops",
+                    "paramType": "number",
+                    "defaultValue": 1,
+                    "required": false,
+                    "description": "loopForever参数为false时，设定循环次数"
+                },
+                {
+                    "paramName": "autoSize",
+                    "paramType": "boolean",
+                    "defaultValue": true,
+                    "required": false,
+                    "description": "自动调整大小"
+                },
+                {
+                    "paramName": "width",
+                    "paramType": "number",
+                    "defaultValue": 500,
+                    "required": false,
+                    "description": "宽度"
+                },
+                {
+                    "paramName": "height",
+                    "paramType": "number",
+                    "defaultValue": 500,
+                    "required": false,
+                    "description": "高度"
+                },
+                {
+                    "paramName": "content",
+                    "paramType": "List<CPImage>",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "传递的图像或视频"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPGIF",
+                    "description": "制作的GIF"
+                }
+            ]
+        },
+        "9": {
+            "name": "phone.actions.GetLastVideo",
+            "description": "描述摘要:从照片库中获取最新的视频。",
+            "inputParams": [
+                {
+                    "paramName": "numberOfVideos",
+                    "paramType": "number",
+                    "defaultValue": 1,
+                    "required": false,
+                    "description": "获取视频数量;默认参数:1张"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "videoResult",
+                    "paramType": "List<CPVideo>",
+                    "description": "返回获取的视频列表"
+                }
+            ]
+        },
+        "10": {
+            "name": "phone.actions.FilterPhotos",
+            "description": "描述摘要:从相簿中筛选照片。",
+            "inputParams": [
+                {
+                    "paramName": "sortProperty",
+                    "paramType": "string",
+                    "defaultValue": "拍摄日期",
+                    "required": false,
+                    "description": "排序属性;可选参数:拍摄日期、名称、大小、上次修改日期"
+                },
+                {
+                    "paramName": "sortOrder",
+                    "paramType": "string",
+                    "defaultValue": "升序",
+                    "required": false,
+                    "description": "排序顺序;可选参数:升序(aesc)、降序(desc)"
+                },
+                {
+                    "paramName": "limitEnabled",
+                    "paramType": "boolean",
+                    "defaultValue": false,
+                    "required": false,
+                    "description": "返回是否限制"
+                },
+                {
+                    "paramName": "limitNumber",
+                    "paramType": "number",
+                    "defaultValue": 1,
+                    "required": false,
+                    "description": "返回限制个数"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "filterResult",
+                    "paramType": "List<CPImage>",
+                    "description": "筛选出的照片列表"
+                }
+            ]
+        },
+        "11": {
+            "name": "phone.actions.GetFramesFromImage",
+            "description": "描述摘要:将动画GIF或照片拆分为单独的帧",
+            "inputParams": [
+                {
+                    "paramName": "images",
+                    "paramType": "CPImage",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "动画、GIF或照片"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "framesFromImage",
+                    "paramType": "WFImageContentItem",
+                    "description": ""
+                }
+            ]
+        },
+        "12": {
+            "name": "phone.actions.MakeImageFromPdfPage",
+            "description": "描述摘要:从传入操作的PDF中的页面创建图像。",
+            "inputParams": [
+                {
+                    "paramName": "pdf",
+                    "paramType": "string",
+                    "defaultValue": "LastOpenedFile",
+                    "required": true,
+                    "description": "PDF文件"
+                },
+                {
+                    "paramName": "imageFormat",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "图片格式，PNG、JPG、JPEG"
+                },
+                {
+                    "paramName": "color",
+                    "paramType": "string",
+                    "defaultValue": "RGB",
+                    "required": false,
+                    "description": "颜色，彩色(RGB)、灰色(Gray)"
+                },
+                {
+                    "paramName": "resolution",
+                    "paramType": "number",
+                    "defaultValue": 300,
+                    "required": false,
+                    "description": "分辨率（DPI）"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "image",
+                    "paramType": "CPImage",
+                    "description": "图像"
+                }
+            ]
+        },
+        "13": {
+            "name": "phone.actions.OverlayImages",
+            "description": "描述摘要:将多个图像进行叠加。",
+            "inputParams": [
+                {
+                    "paramName": "images",
+                    "paramType": "List<CPImage>",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "图像列表"
+                },
+                {
+                    "paramName": "showImageEditor",
+                    "paramType": "boolean",
+                    "defaultValue": true,
+                    "required": false,
+                    "description": "叠加完显示图像编辑器"
+                },
+                {
+                    "paramName": "opacity",
+                    "paramType": "number",
+                    "defaultValue": 100,
+                    "required": true,
+                    "description": "透明度"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "overlaidImage",
+                    "paramType": "CPImage",
+                    "description": "图像"
+                }
+            ]
+        }
+    },
+    "天气类":{
+        "1": {
+            "name": "phone.actions.WeatherForecast",
+            "description": "描述摘要:获取指定位置的每小时或每日天气预报。",
+            "inputParams": [
+                {
+                    "paramName": "location",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToCurrentLocation",
+                    "required": false,
+                    "description": "位置;默认参数:当前位置"
+                },
+                {
+                    "paramName": "type",
+                    "paramType": "string",
+                    "defaultValue": "Daily",
+                    "required": false,
+                    "description": "结果类型;默认参数每天(Daily)、每小时(Hour)"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "forecastResult",
+                    "paramType": "List<CPWeather>",
+                    "description": "查询天气预报结果,每天返回11天的天气预报,每小时返回24小时的天气预报"
+                }
+            ]
+        },
+        "2": {
+            "name": "phone.actions.WeatherConditions",
+            "description": "描述摘要:从传入的天气状况中获取特定的信息。",
+            "inputParams": [
+                {
+                    "paramName": "weatherConditions",
+                    "paramType": "List<CPWeather>",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "天气信息列表"
+                },
+                {
+                    "paramName": "info",
+                    "paramType": "string",
+                    "defaultValue": "bodyTmp",
+                    "required": false,
+                    "description": "信息类型;可选参数最高温(highestTmp)、最低温(lowestTmp)、体感温度(bodyTmp)、湿度(humidity)、降水量(precipitation)、降水概率(precipitationProb)、紫外线指数(UVI)"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "forecastConditionsResult",
+                    "paramType": "List<string>",
+                    "description": "天气特定信息列表"
+                }
+            ]
+        },
+        "3": {
+            "name": "phone.actions.WeatherCurrentConditions",
+            "description": "输入描述:输出结果描述;描述摘要:获取某地当时天气。",
+            "inputParams": [
+                {
+                    "paramName": "location",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToCurrentLocation",
+                    "required": false,
+                    "description": "位置"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "weatherConditions",
+                    "paramType": "CPWeather",
+                    "description": "返回某地的当时天气情况。"
+                }
+            ]
+        },
+        "4": {
+            "name": "phone.scenes.IsWeatherCondition",
+            "description": "如果输入天气符合满足指定场景，则继续执行",
+            "inputParams": [
+                {
+                    "paramName": "input",
+                    "paramType": "CPWeather",
+                    "defaultValue": "DefaultToCurrentWeather",
+                    "required": false,
+                    "description": "可选项，要判断的天气"
+                },
+                {
+                    "paramName": "condition",
+                    "paramType": "CPWeatherEnum",
+                    "defaultValue": "下雨",
+                    "required": false,
+                    "description": "要判断的天气状况场景，包括下雨，晴朗、多云等"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        }
+    },
+    "工具类":{
+        "1": {
+            "name": "phone.actions.CalculateExpression",
+            "description": "描述摘要:计算给定输入字符串中的数学表达式，并将结果作为数字输出。",
+            "inputParams": [
+                {
+                    "paramName": "input",
+                    "paramType": "string",
+                    "defaultValue": "1",
+                    "required": false,
+                    "description": "表达式输入"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "number",
+                    "description": "计算结果"
+                }
+            ]
+        },
+        "2": {
+            "name": "phone.actions.GetItemFromList",
+            "description": "描述摘要:返回作为输入传递的列表中的一个或多个项目。您可以获取第一个项、最后一个项、随机项、特定索引处的项或一系列索引中的项。",
+            "inputParams": [
+                {
+                    "paramName": "getType",
+                    "paramType": "CPEnumGetListType",
+                    "defaultValue": "firstItem",
+                    "required": false,
+                    "description": "获取列表元素的方式;默认参数: 首项(firstItem);可选参数:首项(firstItem)、末项(lastItem)、随机项(randomItem)、索引项(itemAtIndex)、范围索引项(itemsInRange)"
+                },
+                {
+                    "paramName": "index",
+                    "paramType": "number",
+                    "defaultValue": "0",
+                    "required": false,
+                    "description": "索引"
+                },
+                {
+                    "paramName": "startIndex",
+                    "paramType": "number",
+                    "defaultValue": "0",
+                    "required": false,
+                    "description": "开始索引"
+                },
+                {
+                    "paramName": "endIndex",
+                    "paramType": "number",
+                    "defaultValue": "10",
+                    "required": false,
+                    "description": "结束索引"
+                },
+                {
+                    "paramName": "list",
+                    "paramType": "List<CPObject>",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "列表"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "List<CPObject>",
+                    "description": "返回选定的列表"
+                }
+            ]
+        },
+        "3": {
+            "name": "phone.actions.Conditional",
+            "description": "描述摘要:测试条件是否为真，如果为真，则在内部运行操作。否则，将运行“否则”下的操作。",
+            "inputParams": [
+                {
+                    "paramName": "input",
+                    "paramType": "CPObject",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "输入"
+                },
+                {
+                    "paramName": "condition",
+                    "paramType": "CPCondition",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "条件"
+                },
+                {
+                    "paramName": "conditionActionString",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": false,
+                    "description": "If ${input} ${condition} ${conditionActionString}"
+                },
+                {
+                    "paramName": "numberValue",
+                    "paramType": "number",
+                    "defaultValue": "",
+                    "required": false,
+                    "description": "数字;If ${input} ${condition} ${numberValue}"
+                },
+                {
+                    "paramName": "anotherNumber",
+                    "paramType": "number",
+                    "defaultValue": "",
+                    "required": false,
+                    "description": "另一个数字;If ${input} ${condition} ${numberValue} and ${anotherNumber}"
+                }
+            ],
+            "outputParams": []
+        },
+        "4": {
+            "name": "phone.actions.Delay",
+            "description": "描述摘要:等待指定的秒数，然后继续下一个操作。",
+            "inputParams": [
+                {
+                    "paramName": "numberOfSeconds",
+                    "paramType": "number",
+                    "defaultValue": 1,
+                    "required": false,
+                    "description": "等待时间，单位秒"
+                }
+            ],
+            "outputParams": []
+        },
+        "5": {
+            "name": "phone.actions.RepeatCount",
+            "description": "描述摘要:重复包含的操作，运行指定次数。",
+            "inputParams": [
+                {
+                    "paramName": "count",
+                    "paramType": "number",
+                    "defaultValue": 1,
+                    "required": false,
+                    "description": "重复次数;默认参数:1"
+                }
+            ],
+            "outputParams": []
+        },
+        "6": {
+            "name": "phone.actions.GetDistance",
+            "description": "描述摘要:计算两点之间的距离。",
+            "inputParams": [
+                {
+                    "paramName": "startLocation",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToCurrentLocation",
+                    "required": false,
+                    "description": "起始地点;默认参数:当前地址"
+                },
+                {
+                    "paramName": "endLocation",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "终止地点"
+                },
+                {
+                    "paramName": "routeType",
+                    "paramType": "enum",
+                    "defaultValue": "Direct",
+                    "required": false,
+                    "description": "路线类型;默认参数:直线距离;可选参数:直线距离(Direct)、驾驶(Driving)、步行(Walking)、骑行(Biking)"
+                },
+                {
+                    "paramName": "unit",
+                    "paramType": "enum",
+                    "defaultValue": "Miles",
+                    "required": false,
+                    "description": "单位 米、千米"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "distance",
+                    "paramType": "number",
+                    "description": "距离"
+                }
+            ]
+        },
+        "7": {
+            "name": "phone.actions.AddToMemorandum",
+            "description": "描述摘要:将传入文本追加到指定备忘录",
+            "inputParams": [
+                {
+                    "paramName": "text",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "文本"
+                },
+                {
+                    "paramName": "memora",
+                    "paramType": "CPMemorandum",
+                    "defaultValue": "DefaultFirst",
+                    "required": true,
+                    "description": "备忘录名称"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "updatedMemorandum",
+                    "paramType": "CPMemorandum",
+                    "description": "更新后的备忘录"
+                }
+            ]
+        },
+        "8": {
+            "name": "phone.actions.AirDropDocument",
+            "description": "描述摘要:通过AirDrop提示共享输入。",
+            "inputParams": [
+                {
+                    "paramName": "content",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "内容"
+                }
+            ],
+            "outputParams": []
+        },
+        "9": {
+            "name": "phone.actions.Folder",
+            "description": "描述摘要:将指定的文件夹传递给下一个action。",
+            "inputParams": [
+                {
+                    "paramName": "folder",
+                    "paramType": "string",
+                    "defaultValue": "DefaultLastOpen",
+                    "required": false,
+                    "description": "Folder"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "folder",
+                    "paramType": "CPFolder",
+                    "description": ""
+                }
+            ]
+        },
+        "10": {
+            "name": "phone.actions.MoveWindow",
+            "description": "描述摘要:将一个或多个窗口移动到指定位置.",
+            "inputParams": [
+                {
+                    "paramName": "position",
+                    "paramType": "string",
+                    "defaultValue": "Center",
+                    "required": false,
+                    "description": "Position"
+                },
+                {
+                    "paramName": "x",
+                    "paramType": "number",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "X"
+                },
+                {
+                    "paramName": "y",
+                    "paramType": "numner",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "Y"
+                },
+                {
+                    "paramName": "window",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "Window"
+                },
+                {
+                    "paramName": "bringtoFront",
+                    "paramType": "boolean",
+                    "defaultValue": true,
+                    "required": false,
+                    "description": "Bring to Front"
+                }
+            ],
+            "outputParams": []
+        },
+        "11": {
+            "name": "phone.actions.ScanCode",
+            "description": "描述摘要:使用相机扫描二维码或条形码，并返回找到的文本/URL。",
+            "inputParams": [],
+            "outputParams": [
+                {
+                    "paramName": "code",
+                    "paramType": "string",
+                    "description": "扫码结果"
+                }
+            ]
+        },
+        "12": {
+            "name": "phone.actions.GetTextFromPdf",
+            "description": "描述摘要:从提供的PDF文件中获取文本。.",
+            "inputParams": [
+                {
+                    "paramName": "pdf",
+                    "paramType": "string",
+                    "defaultValue": "LastOpenedFile",
+                    "required": true,
+                    "description": "PDF文件"
+                },
+                {
+                    "paramName": "pageHeaderText",
+                    "paramType": "string",
+                    "defaultValue": "DeafultAny",
+                    "required": false,
+                    "description": "页眉文本"
+                },
+                {
+                    "paramName": "pageFooterText",
+                    "paramType": "string",
+                    "defaultValue": "DeafultAny",
+                    "required": false,
+                    "description": "页脚文本"
+                },
+                {
+                    "paramName": "combinePages",
+                    "paramType": "boolean",
+                    "defaultValue": true,
+                    "required": false,
+                    "description": "是否合并页面"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "text",
+                    "paramType": "CPText",
+                    "description": "提供的PDF文件中获取的文本"
+                }
+            ]
+        }
+    },
+    "应用类":{
+        "1": {
+            "name": "phone.scenes.IsApplication",
+            "description": "描述摘要: 当满足`切换某个APP`场景时",
+            "inputParams": [
+                {
+                    "paramName": "application",
+                    "paramType": "CPApplication",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "当满足`切换某个APP`场景时，设置应用"
+                },
+                {
+                    "paramName": "applicationState",
+                    "paramType": "CPEnumApplicationState",
+                    "defaultValue": "open",
+                    "required": false,
+                    "description": "当满足open或close场景时，设置应用状态"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "2": {
+            "name": "phone.actions.SearchWeb",
+            "description": "描述摘要: 在Safari浏览器中搜索",
+            "inputParams": [
+                {
+                    "paramName": "service",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToBrowser",
+                    "required": false,
+                    "description": "用来搜索的设备"
+                },
+                {
+                    "paramName": "text",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "要搜索的内容"
+                }
+            ],
+            "outputParams": []
+        },
+        "3": {
+            "name": "phone.actions.GetPinboard",
+            "description": "描述摘要:获取网页 Pinboard 书签.",
+            "inputParams": [
+                {
+                    "paramName": "tags",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "标签"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "pinboardBookmarks",
+                    "paramType": "CPUrl",
+                    "description": ""
+                }
+            ]
+        }
+    },
+    "时间类":{
+        "1": {
+            "name": "phone.scenes.IsTime",
+            "description": "描述摘要: 判断时间是否符合设定场景",
+            "inputParams": [
+                {
+                    "paramName": "specificTime",
+                    "paramType": "CPTime",
+                    "defaultValue": "DefaultToCurrentTime",
+                    "required": false,
+                    "description": "如果输入满足state,则继续执行后面内容"
+                },
+                {
+                    "paramName": "state",
+                    "paramType": "string",
+                    "defaultValue": "夜间",
+                    "required": false,
+                    "description": "特殊的时间类场景,如夜间、日间、早上、晚上、长期、短期。特殊场景直接使用string定义"
+                },
+                {
+                    "paramName": "repeat",
+                    "paramType": "CPEnumRepeatTime",
+                    "defaultValue": "Day",
+                    "required": false,
+                    "description": "设置是否重复,每天(Day)、每周(Week)、每月(Month)"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "2": {
+            "name": "phone.actions.CreateAlarm",
+            "description": "输入描述:闹钟时间和模式;描述摘要:设定闹钟提醒",
+            "inputParams": [
+                {
+                    "paramName": "time",
+                    "paramType": "CPDate",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "时间"
+                },
+                {
+                    "paramName": "repeat",
+                    "paramType": "CPEnumAlarmType",
+                    "defaultValue": "Never",
+                    "required": false,
+                    "description": "提醒类型;默认参数:Never(从不)、EveryMonday(每周一)"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "string",
+                    "description": "创建成功或失败消息"
+                }
+            ]
+        },
+        "3": {
+            "name": "phone.scenes.IsClock",
+            "description": "描述摘要: 当设置某个指定闹钟的打开或停止状态",
+            "inputParams": [
+                {
+                    "paramName": "clockState",
+                    "paramType": "CPEnumClockState",
+                    "defaultValue": "稍后提醒",
+                    "required": false,
+                    "description": "当满足`闹钟`场景时，设置闹钟状态，取值： 停止时、稍后提醒"
+                },
+                {
+                    "paramName": "clockObject",
+                    "paramType": "CPClock",
+                    "defaultValue": "DefaultToClock",
+                    "required": false,
+                    "description": "当满足`闹钟`场景时，设置哪一个闹钟"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        }
+    },
+    "设备类":{
+        "1": {
+            "name": "phone.actions.GetDeviceDetails",
+            "description": "描述摘要:返回当前设备的信息。",
+            "inputParams": [
+                {
+                    "paramName": "detail",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToCurrentDevice",
+                    "required": false,
+                    "description": "设备信息;默认参数:设备名称"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "deviceDetails",
+                    "paramType": "string",
+                    "description": "设备信息"
+                }
+            ]
+        },
+        "2": {
+            "name": "phone.actions.OpenApp",
+            "description": "描述摘要:打开指定的应用.",
+            "inputParams": [
+                {
+                    "paramName": "appName",
+                    "paramType": "CPApp",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "App名称"
+                }
+            ],
+            "outputParams": []
+        },
+        "3": {
+            "name": "phone.actions.SearchPodcasts",
+            "description": "描述摘要:搜索播客，返回与指定搜索词匹配的项目.",
+            "inputParams": [
+                {
+                    "paramName": "search",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "搜索关键词"
+                },
+                {
+                    "paramName": "searchBy",
+                    "paramType": "string",
+                    "defaultValue": "全部",
+                    "required": false,
+                    "description": "搜索条件：全部、标题、作者、语言、评分"
+                },
+                {
+                    "paramName": "country",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToLocation",
+                    "required": false,
+                    "description": "国家地区"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "podcasts",
+                    "paramType": "WFPodcastShowContentItem",
+                    "description": "返回的与指定搜索词匹配的项目"
+                }
+            ]
+        },
+        "4": {
+            "name": "phone.actions.SetAirplaneMode",
+            "description": "切换设备飞行模式打开或关闭",
+            "inputParams": [
+                {
+                    "paramName": "airplaneModeState",
+                    "paramType": "CPEnumAirplanemodeState",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "当满足`切换飞行模式`场景时，设置状态，可选有open状态和close状态"
+                }
+            ],
+            "outputParams": []
+        },
+        "5": {
+            "name": "phone.scenes.IsNetwork",
+            "description": "描述摘要: 判断是否连接到某个网络",
+            "inputParams": [
+                {
+                    "paramName": "network",
+                    "paramType": "CPNetwork",
+                    "defaultValue": "DeafultAny",
+                    "required": false,
+                    "description": "当满足`连接到wif`场景时，设置网络"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "6": {
+            "name": "phone.scenes.IsBlueTooth",
+            "description": "描述摘要: 判断是否连接蓝牙",
+            "inputParams": [
+                {
+                    "paramName": "device",
+                    "paramType": "CPDevice",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "当满足`连接到蓝牙`场景时，设置设备"
+                },
+                {
+                    "paramName": "blueToothState",
+                    "paramType": "CPEnumBlueToothState",
+                    "defaultValue": "连接时",
+                    "required": false,
+                    "description": "当满足`蓝牙`场景时，设置蓝牙状态，取值： 连接时、断开时"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "7": {
+            "name": "phone.scenes.IsAirplaneModeState",
+            "description": "描述摘要: 判断是否处于飞行模式",
+            "inputParams": [
+                {
+                    "paramName": "airplanemodeState",
+                    "paramType": "CPEnumAirplanemodeState",
+                    "defaultValue": "open",
+                    "required": false,
+                    "description": "当满足`切换飞行模式`场景时，设置状态,可选项包括open(开启)、close(关闭)"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "8": {
+            "name": "phone.scenes.IsDNDState",
+            "description": "描述摘要: 判断是否处于勿扰模式",
+            "inputParams": [
+                {
+                    "paramName": "dndState",
+                    "paramType": "CPEnumDNDState",
+                    "defaultValue": "open",
+                    "required": false,
+                    "description": "当满足`切换勿扰模式`场景时,设置勿扰模式状态,可选项包括open(开启)、close(关闭)"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "9": {
+            "name": "phone.scenes.LowBatteryMode",
+            "description": "描述摘要: 判断是否处于低电量模式",
+            "inputParams": [
+                {
+                    "paramName": "lowBatteryModeState",
+                    "paramType": "CPEnumLowBatteryModeState",
+                    "defaultValue": "middle",
+                    "required": false,
+                    "description": "当满足`切换省电模式`场景时，设置状态,可选项包括full、high、middle、little"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "10": {
+            "name": "phone.scenes.GetBatteryCapacity",
+            "description": "描述摘要: 判断电池容量",
+            "inputParams": [
+                {
+                    "paramName": "batteryLevel",
+                    "paramType": "CPEnumBatteryLevel",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "当满足`特定电池电量`场景时，设置电量阈值，等于、大于、小于"
+                },
+                {
+                    "paramName": "batteryValue",
+                    "paramType": "number",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "当满足`特定电池电量`场景时，设置电量数值"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "11": {
+            "name": "phone.scenes.IsCharge",
+            "description": "描述摘要: 判断充电状态",
+            "inputParams": [
+                {
+                    "paramName": "chargeState",
+                    "paramType": "CPEnumChargeState",
+                    "defaultValue": "on",
+                    "required": false,
+                    "description": "当满足`切换充电器`场景时，设置充电器状态,可选包括on、off"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+         "12": {
+            "name": "phone.actions.SetBlueTooth",
+            "description": "打开或关闭蓝牙",
+            "inputParams": [
+                {
+                    "paramName": "blueToothmodeState",
+                    "paramType": "CPEnumAirplanemodeState",
+                    "defaultValue": "open",
+                    "required": false,
+                    "description": "可选的蓝牙状态包括open状态和close状态"
+                }
+            ],
+            "outputParams": []
+        }
+    },
+    "通信类":{
+        "1":{
+            "name": "phone.scenes.Email",
+            "description": "描述摘要: 判断是否收到或发送了满足条件的邮件",
+            "inputParams": [
+                {
+                    "paramName": "from",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToSender",
+                    "required": false,
+                    "description": "当满足`发送邮件`场景时，设置发件人"
+                },
+                {
+                    "paramName": "to",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToSender",
+                    "required": false,
+                    "description": "当满足`发送邮件`场景时，设置收件人"
+                },
+                {
+                    "paramName": "content",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "当满足`发送邮件`场景时，设置包含内容"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "2":{
+            "name": "phone.scenes.Message",
+            "description": "描述摘要: 判断是否收到或发送了满足条件的短信",
+            "inputParams": [
+                {
+                    "paramName": "from",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToSender",
+                    "required": false,
+                    "description": "当满足`发送消息`场景时，设置发件人"
+                },
+                {
+                    "paramName": "to",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToSender",
+                    "required": false,
+                    "description": "当满足`发送消息`场景时，设置收件人"
+                },
+                {
+                    "paramName": "content",
+                    "paramType": "string",
+                    "defaultValue": "true",
+                    "required": false,
+                    "description": "当满足`发送消息`场景时，设置包含内容"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "CPIfInput",
+                    "description": "判断结果"
+                }
+            ]
+        },
+        "3":{
+            "name": "phone.actions.SendEmail",
+            "description": "描述摘要:呈现电子邮件编写器。将文本传递到操作中以设置电子邮件正文。其他类型的输入作为附件添加。",
+            "inputParams": [
+                {
+                    "paramName": "from",
+                    "paramType": "string",
+                    "defaultValue": "DefaultToCurrentSender",
+                    "required": true,
+                    "description": "发件人;默认参数:当前邮件账号"
+                },
+                {
+                    "paramName": "to",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "收件人;"
+                },
+                {
+                    "paramName": "cc",
+                    "paramType": "string",
+                    "defaultValue": "DeafultAny",
+                    "required": false,
+                    "description": "复写的副本"
+                },
+                {
+                    "paramName": "bcc",
+                    "paramType": "string",
+                    "defaultValue": "DeafultAny",
+                    "required": false,
+                    "description": "密件抄送"
+                },
+                {
+                    "paramName": "subject",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "邮件主题"
+                },
+                {
+                    "paramName": "message",
+                    "paramType": "CPContent",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "消息"
+                },
+                {
+                    "paramName": "saveAsDraft",
+                    "paramType": "boolean",
+                    "defaultValue": true,
+                    "required": false,
+                    "description": "另存为草稿"
+                }
+            ],
+            "outputParams": [
+                {
+                    "paramName": "result",
+                    "paramType": "string",
+                    "description": "邮件发送确认"
+                }
+            ]
+        },
+        "4": {
+            "name": "phone.actions.SendMessage",
+            "description": "描述摘要:发送消息。将图像、视频或其他文件作为输入传递以包括附件。",
+            "inputParams": [
+                {
+                    "paramName": "showWhenRun",
+                    "paramType": "boolean",
+                    "defaultValue": true,
+                    "required": false,
+                    "description": "运行时是否显示"
+                },
+                {
+                    "paramName": "recipients",
+                    "paramType": "List<string>",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "接收者"
+                },
+                {
+                    "paramName": "message",
+                    "paramType": "CPContent",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "发送内容"
+                }
+            ],
+            "outputParams": []
+        },
+        "5": {
+            "name": "phone.actions.Contacts",
+            "description": "描述摘要:从上一个操作的结果中获取联系人。",
+            "inputParams": [
+                {
+                    "paramName": "content",
+                    "paramType": "string",
+                    "defaultValue": "",
+                    "required": true,
+                    "description": "从上一个操作的结果中获取联系人"
+                }
+            ],
+            "outputParams": []
+        }
+    }
+}
