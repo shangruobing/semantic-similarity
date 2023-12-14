@@ -44,5 +44,5 @@ ax.set_ylabel("Score")
 # 设置横刻度标签为水平
 plt.xticks(rotation=0)
 plt.tight_layout()
-plt.savefig('api_retrieve.png', dpi=400, bbox_inches='tight')
+plt.savefig('metrics.png', dpi=400, bbox_inches='tight')
 plt.show()

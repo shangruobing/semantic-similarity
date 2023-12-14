@@ -3,7 +3,6 @@ import csv
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-from transformers import BertTokenizer, BertModel
 from src.config import FINE_TUNE
 from src.utils import get_device
 from src.dataset import train_dataloader, test_dataloader
@@ -53,7 +52,7 @@ class Trainer:
                         outputs = self.model(intent, description)
                         predicted = 1 if outputs > threshold else 0
                         log_writer.writerow([intent, description, round(outputs.item(), 4), predicted, label])
-                        assert type(predicted) == type(label)
+                        assert type(predicted) is type(label)
                         if predicted == label:
                             counts[label] += 1
                         else:
@@ -79,14 +78,3 @@ class Trainer:
         recall = true_positive / (true_positive + false_negative) if (true_positive + false_negative) > 0 else 0
         f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
         return round(accuracy, 4), round(precision, 4), round(recall, 4), round(f1, 4)
-
-
-if __name__ == '__main__':
-    from src.config import SIMILARITY_MODEL
-    from src.similarity.siamese.model import SiameseBertModel
-
-    tokenizer = BertTokenizer.from_pretrained(SIMILARITY_MODEL)
-    model = BertModel.from_pretrained(SIMILARITY_MODEL)
-    siamese_model = SiameseBertModel(tokenizer, model)
-    trainer = Trainer(tokenizer=tokenizer, model=siamese_model, model_name="siamese")
-    trainer.train()

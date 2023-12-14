@@ -1,55 +1,36 @@
+import os
+
 import pandas as pd
-from src.metrics import calculate_precision_f1_recall
-from src.config import API_RETRIEVE_PATH, API_RETRIEVE_METRICS_PATH
 from tqdm import tqdm
+from src.baseline.model import BaselineModel
 from src.cross.model import CrossFineTuneModel
 from src.siamese.model import SiameseFineTuneModel
+from src.config import DATA_PATH, FOLDER_PATH
 
 
 class Evaluator:
-    def __init__(self):
-        self.dataframe = None
-        self.intents = []
-        self.actions = []
-        self.__load_real_data()
-
-    def __load_real_data(self):
-        self.dataframe = pd.read_csv(API_RETRIEVE_PATH, encoding="utf-8-sig")
-        self.intents = self.dataframe["intent"].values.tolist()
-        self.actions = self.dataframe["actions"].values.tolist()
-
-    def execute_similarity_match(self, model, name):
-        select_list = [model.similarity_match(item, only_name=True, top=3) for item in tqdm(self.intents)]
-        self.dataframe[name + '_actions'] = select_list
-        precisions = []
-        recalls = []
-        f1s = []
-        for index, select in enumerate(select_list):
-            precision, recall, f1 = calculate_precision_f1_recall(eval(self.actions[index]), eval(str(select)))
-            precisions.append(precision)
-            recalls.append(recall)
-            f1s.append(f1)
-
-        self.dataframe[name + '_precision'] = precisions
-        self.dataframe[name + '_recall'] = recalls
-        self.dataframe[name + '_f1'] = f1s
-        self.dataframe.to_csv(API_RETRIEVE_PATH, index=False, encoding="utf-8-sig")
-
-    def statistics(self, columns):
-        metrics = {
-            'Name': [],
-            'Precision': [],
-            'Recall': [],
-            'F1': [],
-        }
-        for column in columns:
-            metrics["Name"].append(column)
-            metrics["Precision"].append(round(self.dataframe[column + '_precision'].sum(), 3))
-            metrics["Recall"].append(round(self.dataframe[column + '_recall'].sum(), 3))
-            metrics["F1"].append(round(self.dataframe[column + '_f1'].sum(), 3))
-        markdown_table = pd.DataFrame(metrics).to_markdown(index=False)
-        with open(API_RETRIEVE_METRICS_PATH, 'w') as file:
-            file.write(markdown_table)
+    @staticmethod
+    def evaluate(model):
+        df = pd.read_csv(DATA_PATH / "dataset/test2.csv")
+        name = df['name']
+        rewrite = df['rewrite']
+        label = df['label']
+        predict = []
+        for index in tqdm(range(len(df))):
+            pred = model.classify(*[name[index], rewrite[index]])
+            predict.append(pred)
+        if not os.path.exists(FOLDER_PATH):
+            os.mkdir(FOLDER_PATH)
+        FILE_PATH = f"{FOLDER_PATH}/result.csv"
+        if os.path.exists(FILE_PATH):
+            df = pd.read_csv(FILE_PATH, encoding="utf-8-sig")
+        else:
+            print(f"The {FILE_PATH} does not exist, an {FILE_PATH} file has been created.")
+            df = pd.DataFrame(columns=["name", "rewrite", "label", "predict"])
+        for index in range(len(predict)):
+            new_row = {'name': name[index], 'rewrite': rewrite[index], 'label': label[index], 'predict': predict[index]}
+            df.loc[len(df)] = new_row
+        df.to_csv(FILE_PATH, index=False, encoding="utf-8-sig")
 
 
 if __name__ == '__main__':
@@ -57,24 +38,16 @@ if __name__ == '__main__':
 
     evaluator = Evaluator()
     # Baseline模型
-    # print("=============BaseLineModel=============")
-    # fineTuneModel = BaseLineModel(SIMILARITY_MODEL)
-    # evaluator.execute_similarity_match(fineTuneModel, "baseline")
+    print("=============BaseLineModel=============")
+    fineTuneModel = BaselineModel(SIMILARITY_MODEL)
+    evaluator.evaluate(fineTuneModel)
 
     # Cross模型
     print("===========CrossFineTuneModel===========")
     fineTuneModel = CrossFineTuneModel(model_path=SIMILARITY_MODEL, state_dict_path=CROSS_MODEL_STATE_DICT)
-    evaluator.execute_similarity_match(fineTuneModel, "cross")
+    evaluator.evaluate(fineTuneModel)
 
     # Siamese模型
     print("==========SiameseFineTuneModel==========")
     model = SiameseFineTuneModel(model_path=SIMILARITY_MODEL, state_dict_path=SIAMESE_MODEL_STATE_DICT)
-    evaluator.execute_similarity_match(model, "siamese")
-
-    evaluator.statistics(
-        [
-            "baseline",
-            "cross",
-            "siamese",
-        ]
-    )
+    evaluator.evaluate(model)
