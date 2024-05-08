@@ -8,7 +8,6 @@ class FineTuneModel(ABC):
 
     def __init__(self, model_path):
         self.model_path = model_path
-        self.apis = []
         self.tokenizer = None
         self.model = None
         self._init_model()
@@ -21,10 +20,6 @@ class FineTuneModel(ABC):
     def _fit(self, sentence, candidate_sentence, threshold=0.6) -> Tuple[int, float]:
         raise NotImplementedError
 
-    def classify(self, sentence, candidate_sentence) -> float:
-        label, _ = self._fit(sentence, candidate_sentence)
-        return label
-
-    def classify_with_score(self, sentence, candidate_sentence) -> Tuple[int, float]:
+    def classify(self, sentence, candidate_sentence) -> Tuple[int, float]:
         label, score = self._fit(sentence, candidate_sentence)
         return label, score

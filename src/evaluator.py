@@ -1,53 +1,68 @@
 import os
 
 import pandas as pd
+from sklearn.metrics import confusion_matrix, accuracy_score
 from tqdm import tqdm
 from src.baseline.model import BaselineModel
 from src.cross.model import CrossFineTuneModel
 from src.siamese.model import SiameseFineTuneModel
-from src.config import DATA_PATH, FOLDER_PATH
 
 
 class Evaluator:
-    @staticmethod
-    def evaluate(model):
-        df = pd.read_csv(DATA_PATH / "dataset/test2.csv")
-        name = df['name']
-        rewrite = df['rewrite']
-        label = df['label']
-        predict = []
-        for index in tqdm(range(len(df))):
-            pred = model.classify(*[name[index], rewrite[index]])
-            predict.append(pred)
-        if not os.path.exists(FOLDER_PATH):
-            os.mkdir(FOLDER_PATH)
-        FILE_PATH = f"{FOLDER_PATH}/result.csv"
-        if os.path.exists(FILE_PATH):
-            df = pd.read_csv(FILE_PATH, encoding="utf-8-sig")
+    def __init__(self, data_path, folder_path, model_name):
+        self.dataset = pd.read_csv(data_path).values
+        self.folder_path = folder_path
+        self.model_name = model_name
+        self.file_path = f"{self.folder_path}/{self.model_name}.csv"
+
+    def _init_writer(self):
+        if not os.path.exists(self.folder_path):
+            os.mkdir(self.folder_path)
+        if os.path.exists(self.file_path):
+            writer = pd.read_csv(self.file_path, encoding="utf-8-sig")
         else:
-            print(f"The {FILE_PATH} does not exist, an {FILE_PATH} file has been created.")
-            df = pd.DataFrame(columns=["name", "rewrite", "label", "predict"])
-        for index in range(len(predict)):
-            new_row = {'name': name[index], 'rewrite': rewrite[index], 'label': label[index], 'predict': predict[index]}
-            df.loc[len(df)] = new_row
-        df.to_csv(FILE_PATH, index=False, encoding="utf-8-sig")
+            print(f"The {self.file_path} does not exist, an {self.file_path} file has been created.")
+            writer = pd.DataFrame(columns=["name", "rewrite", "label", "predict", "confidence"])
+        return writer
+
+    def evaluate(self, model):
+        writer = self._init_writer()
+        predicts = []
+        for data in tqdm(iterable=self.dataset, desc="Evaluating"):
+            name, rewrite, label = data
+            predict, confidence = model.classify(*[name, rewrite])
+            writer.loc[len(writer)] = {
+                'name': name,
+                'rewrite': rewrite,
+                'label': label,
+                'predict': predict,
+                "confidence": round(confidence, 4)
+            }
+            predicts.append(predict)
+        writer.to_csv(self.file_path, index=False, encoding="utf-8-sig")
+
+        labels = self.dataset[:, -1].tolist()
+        print("Confusion Matrix:")
+        print(confusion_matrix(y_true=labels, y_pred=predicts))
+        print("Accuracy:", accuracy_score(y_true=labels, y_pred=predicts))
 
 
 if __name__ == '__main__':
-    from src.config import SIMILARITY_MODEL, SIAMESE_MODEL_STATE_DICT, CROSS_MODEL_STATE_DICT
+    from src.config import DATA_PATH, FOLDER_PATH, SIMILARITY_MODEL, SIAMESE_MODEL_STATE_DICT, CROSS_MODEL_STATE_DICT
 
-    evaluator = Evaluator()
-    # Baseline模型
+    data_path = DATA_PATH / "dataset/train.csv"
+
     print("=============BaseLineModel=============")
-    fineTuneModel = BaselineModel(SIMILARITY_MODEL)
+    evaluator = Evaluator(data_path=data_path, folder_path=FOLDER_PATH, model_name="baseline")
+    fineTuneModel = BaselineModel(model_path=SIMILARITY_MODEL)
     evaluator.evaluate(fineTuneModel)
 
-    # Cross模型
     print("===========CrossFineTuneModel===========")
-    fineTuneModel = CrossFineTuneModel(model_path=SIMILARITY_MODEL, state_dict_path=CROSS_MODEL_STATE_DICT)
-    evaluator.evaluate(fineTuneModel)
+    evaluator = Evaluator(data_path=data_path, folder_path=FOLDER_PATH, model_name="cross")
+    model = CrossFineTuneModel(model_path=SIMILARITY_MODEL, state_dict_path=CROSS_MODEL_STATE_DICT)
+    evaluator.evaluate(model)
 
-    # Siamese模型
     print("==========SiameseFineTuneModel==========")
+    evaluator = Evaluator(data_path=data_path, folder_path=FOLDER_PATH, model_name="siamese")
     model = SiameseFineTuneModel(model_path=SIMILARITY_MODEL, state_dict_path=SIAMESE_MODEL_STATE_DICT)
     evaluator.evaluate(model)

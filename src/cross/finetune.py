@@ -39,8 +39,8 @@ class CrossBertModel(nn.Module):
 def train():
     tokenizer = BertTokenizer.from_pretrained(SIMILARITY_MODEL)
     model = BertModel.from_pretrained(SIMILARITY_MODEL)
-    siamese_model = CrossBertModel(tokenizer, model)
-    trainer = Trainer(tokenizer=tokenizer, model=siamese_model, model_name="cross")
+    cross_model = CrossBertModel(tokenizer, model)
+    trainer = Trainer(model=cross_model, model_name="cross")
     trainer.train()
 
 

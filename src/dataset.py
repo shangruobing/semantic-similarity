@@ -38,21 +38,6 @@ class DataBuilder:
         return data
 
     @staticmethod
-    def __fold(data_list):
-        num_folds = 5
-        fold_size = len(data_list) // num_folds
-        train_sets = []
-        validation_sets = []
-        for fold in range(num_folds):
-            start_idx = fold * fold_size
-            end_idx = (fold + 1) * fold_size
-            validation_set = data_list[start_idx:end_idx]
-            train_set = [item for item in data_list if item not in validation_set]
-            train_sets.append(train_set)
-            validation_sets.append(validation_set)
-        return train_sets, validation_sets
-
-    @staticmethod
     def __filter_data(selects, candidates):
         """
         检查candidates中是否含有selects中的元素,若包含则将该元素移动到selects中
@@ -66,20 +51,18 @@ class DataBuilder:
 
     def build_dataset(self, save_to_disk=False):
         data = self.__contact_data()
-        train_sets, validate_sets = self.__fold(data)
-        datasets = []
-        for index, item in enumerate(train_sets):
-            train_set, validate_set = self.__filter_data(item, validate_sets[index])
-            dataset = DatasetDict()
-            dataset["train"] = Dataset.from_list(train_set)
-            dataset["test"] = Dataset.from_list(validate_set)
-            datasets.append(dataset)
-            if save_to_disk:
-                pd.DataFrame(train_set).to_csv(f"{DATA_PATH}/dataset/train{index + 1}.csv", index=False,
-                                               encoding="utf-8-sig")
-                pd.DataFrame(validate_set).to_csv(f"{DATA_PATH}/dataset/test{index + 1}.csv", index=False,
-                                                  encoding="utf-8-sig")
-        return datasets
+        random.shuffle(data)
+        split_radio = 0.8
+        train_size = int(len(data) * split_radio)
+        train_set = data[:train_size]
+        test_set = data[train_size:]
+        dataset = DatasetDict()
+        dataset["train"] = Dataset.from_list(train_set)
+        dataset["test"] = Dataset.from_list(test_set)
+        if save_to_disk:
+            pd.DataFrame(train_set).to_csv(f"{DATA_PATH}/dataset/train.csv", index=False, encoding="utf-8-sig")
+            pd.DataFrame(test_set).to_csv(f"{DATA_PATH}/dataset/test.csv", index=False, encoding="utf-8-sig")
+        return dataset
 
 
 class SentenceDataset(TorchDataset):
@@ -93,19 +76,20 @@ class SentenceDataset(TorchDataset):
         return self.dataset[index][0], self.dataset[index][1], self.dataset[index][-1]
 
 
-batch_size = 1
-train_dataset = pd.read_csv(f"{DATA_PATH}/dataset/train1.csv", encoding="utf-8-sig").values.tolist()
-train_dataloader = DataLoader(SentenceDataset(train_dataset), batch_size=batch_size, shuffle=True)
-test_dataset = pd.read_csv(f"{DATA_PATH}/dataset/test1.csv", encoding="utf-8-sig").values.tolist()
-test_dataloader = DataLoader(SentenceDataset(test_dataset), batch_size=batch_size, shuffle=True)
+def get_dataloader():
+    batch_size = 1
+    train_dataset = pd.read_csv(f"{DATA_PATH}/dataset/train.csv", encoding="utf-8-sig").values.tolist()
+    train_dataloader = DataLoader(SentenceDataset(train_dataset), batch_size=batch_size, shuffle=True)
+    test_dataset = pd.read_csv(f"{DATA_PATH}/dataset/test.csv", encoding="utf-8-sig").values.tolist()
+    test_dataloader = DataLoader(SentenceDataset(test_dataset), batch_size=batch_size, shuffle=True)
+    return train_dataloader, test_dataloader
+
 
 if __name__ == '__main__':
     data_builder = DataBuilder()
     datasets = data_builder.build_dataset(save_to_disk=True)
 
-    train_dataset = pd.read_csv(f"{DATA_PATH}/dataset/train1.csv", encoding="utf-8-sig").values.tolist()
-    intent_dataset = SentenceDataset(train_dataset)
-
+    train_dataloader, test_dataloader = get_dataloader()
     for intent, description, label in train_dataloader:
         print("intent, description, label", intent, description, label)
         break

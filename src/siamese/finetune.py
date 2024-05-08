@@ -47,7 +47,7 @@ def train():
     tokenizer = BertTokenizer.from_pretrained(SIMILARITY_MODEL)
     model = BertModel.from_pretrained(SIMILARITY_MODEL)
     siamese_model = SiameseBertModel(tokenizer, model)
-    trainer = Trainer(tokenizer=tokenizer, model=siamese_model, model_name="siamese")
+    trainer = Trainer(model=siamese_model, model_name="siamese")
     trainer.train()
 
 

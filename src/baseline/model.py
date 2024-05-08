@@ -36,4 +36,4 @@ if __name__ == '__main__':
 
     model = BaselineModel(model_path=SIMILARITY_MODEL)
     corpus = ("下雨就打车去苏州大学", "将ABC添加到我的歌单")
-    print(model.classify_with_score(*corpus))
+    print(model.classify(*corpus))

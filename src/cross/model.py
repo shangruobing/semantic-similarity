@@ -28,4 +28,4 @@ if __name__ == '__main__':
 
     corpus = ["下雨就打车去苏州大学", "将ABC添加到我的歌单"]
     model = CrossFineTuneModel(model_path=SIMILARITY_MODEL, state_dict_path=CROSS_MODEL_STATE_DICT)
-    print(model.classify_with_score(*corpus))
+    print(model.classify(*corpus))
