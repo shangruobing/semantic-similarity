@@ -1,7 +1,10 @@
+import sys
+
+sys.path.append("..")
+import torch
+import torch.nn as nn
 from transformers import BertTokenizer, BertModel
 from src.config import SIMILARITY_MODEL
-import torch.nn as nn
-import torch
 from src.utils import get_device
 from src.trainer import Trainer
 

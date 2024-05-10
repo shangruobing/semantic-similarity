@@ -1,7 +1,10 @@
+import sys
+
+sys.path.append("..")
 import torch
+import torch.nn as nn
 from transformers import BertTokenizer, BertModel
 from src.config import SIMILARITY_MODEL
-import torch.nn as nn
 from src.utils import get_device
 from src.trainer import Trainer
 
@@ -18,7 +21,10 @@ class CrossBertModel(nn.Module):
     def forward(self, input1, input2):
         input1 = input1[0] if isinstance(input1, tuple) else input1
         input2 = input2[0] if isinstance(input2, tuple) else input2
-        inputs = self.encoder([input1, input2], padding=True, truncation=True, max_length=128,
+        inputs = self.encoder([input1, input2],
+                              padding=True,
+                              truncation=True,
+                              max_length=128,
                               return_tensors="pt").to(self.device)
         outputs = self.model(**inputs)
         sent1_rep = outputs.last_hidden_state[0, 0, :]

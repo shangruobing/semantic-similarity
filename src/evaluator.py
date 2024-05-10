@@ -1,11 +1,12 @@
 import os
 
 import pandas as pd
-from sklearn.metrics import confusion_matrix, accuracy_score
 from tqdm import tqdm
-from src.baseline.model import BaselineModel
-from src.cross.model import CrossFineTuneModel
-from src.siamese.model import SiameseFineTuneModel
+from sklearn.metrics import confusion_matrix, accuracy_score
+from baseline.model import BaselineModel
+from cross.model import CrossFineTuneModel
+from model import FineTuneModel
+from siamese.model import SiameseFineTuneModel
 
 
 class Evaluator:
@@ -21,16 +22,24 @@ class Evaluator:
         if os.path.exists(self.file_path):
             writer = pd.read_csv(self.file_path, encoding="utf-8-sig")
         else:
-            print(f"The {self.file_path} does not exist, an {self.file_path} file has been created.")
+            print(f"The {self.file_path} does not exist, a new file has been created.")
             writer = pd.DataFrame(columns=["name", "rewrite", "label", "predict", "confidence"])
         return writer
 
-    def evaluate(self, model):
+    def evaluate(self, model: FineTuneModel):
+        """
+        Evaluate the model.
+        Args:
+            model: the finetune model
+
+        Returns:
+
+        """
         writer = self._init_writer()
         predicts = []
         for data in tqdm(iterable=self.dataset, desc="Evaluating"):
             name, rewrite, label = data
-            predict, confidence = model.classify(*[name, rewrite])
+            predict, confidence = model.classify(*[name, rewrite], threshold=0.8)
             writer.loc[len(writer)] = {
                 'name': name,
                 'rewrite': rewrite,
@@ -48,9 +57,9 @@ class Evaluator:
 
 
 if __name__ == '__main__':
-    from src.config import DATA_PATH, FOLDER_PATH, SIMILARITY_MODEL, SIAMESE_MODEL_STATE_DICT, CROSS_MODEL_STATE_DICT
+    from config import DATA_PATH, FOLDER_PATH, SIMILARITY_MODEL, SIAMESE_MODEL_STATE_DICT, CROSS_MODEL_STATE_DICT
 
-    data_path = DATA_PATH / "dataset/train.csv"
+    data_path = DATA_PATH / "dataset/test.csv"
 
     print("=============BaseLineModel=============")
     evaluator = Evaluator(data_path=data_path, folder_path=FOLDER_PATH, model_name="baseline")

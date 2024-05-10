@@ -4,11 +4,9 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 from tabulate import tabulate
-from src.config import FINE_TUNE
-from src.utils import get_device
-from src.dataset import get_dataloader
-
-train_dataloader, test_dataloader = get_dataloader()
+from config import FINE_TUNE
+from utils import get_device
+from dataset import get_dataloader
 
 
 class Trainer:
@@ -30,12 +28,13 @@ class Trainer:
         self.learning_rate = learning_rate
         self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.learning_rate)
         self.save_path = save_path
+        self.train_dataloader, self.test_dataloader = get_dataloader()
 
     def train(self):
         for epoch in tqdm(iterable=range(1, self.num_epochs + 1), desc="Training", disable=True):
             self.model.train()
             total_loss = 0
-            for intent, description, label in train_dataloader:
+            for intent, description, label in self.train_dataloader:
                 label = label.float().to(self.device)
                 outputs = self.model(intent, description)
                 assert outputs.shape == label.shape
@@ -44,7 +43,7 @@ class Trainer:
                 self.optimizer.step()
                 self.optimizer.zero_grad()
                 total_loss += loss.item()
-            average_loss = total_loss / len(train_dataloader)
+            average_loss = total_loss / len(self.train_dataloader)
             print(f"Epoch [{epoch}/{self.num_epochs}] - Average Loss: {round(average_loss, 4)}")
 
             self._evaluate(epoch)
@@ -55,8 +54,8 @@ class Trainer:
         self.model.eval()
         with (
             torch.no_grad(),
-            open(self.model_name + "_log.csv", "a", encoding="utf-8-sig") as log,
-            open(self.model_name + "_metrics.csv", "a", encoding="utf-8-sig") as metrics
+            open(self.model_name + "_log.csv", "w", encoding="utf-8-sig") as log,
+            open(self.model_name + "_metrics.csv", "w", encoding="utf-8-sig") as metrics
         ):
             log_writer = csv.writer(log)
             metrics_writer = csv.writer(metrics)
@@ -66,7 +65,7 @@ class Trainer:
             table = []
             for threshold in [i / 10.0 for i in range(1, 10)]:
                 counts = [0, 0, 0, 0]  # [true_positive, false_positive, true_negative, false_negative]
-                for intent, description, label in test_dataloader:
+                for intent, description, label in self.test_dataloader:
                     label = label.item()
                     outputs = self.model(intent, description)
                     predicted = 1 if outputs > threshold else 0

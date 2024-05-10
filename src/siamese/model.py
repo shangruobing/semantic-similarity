@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append("..")
 from transformers import BertTokenizer, BertModel
 import torch
 from src.siamese.finetune import SiameseBertModel
@@ -18,7 +21,7 @@ class SiameseFineTuneModel(FineTuneModel):
         self.model = SiameseBertModel(self.tokenizer, model).to(get_device())
         self.model.load_state_dict(_state_dict)
 
-    def _fit(self, sentence, candidate_sentence, threshold=0.6):
+    def _fit(self, sentence, candidate_sentence, threshold=0.5):
         outputs = self.model(sentence, candidate_sentence)
         return 1 if outputs.item() > threshold else 0, outputs.item()
 

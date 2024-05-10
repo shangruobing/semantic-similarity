@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from src.utils import get_now_date, get_now_datetime
+from utils import get_now_date, get_now_datetime
 
 # 项目根目录
 ROOT_PATH = Path(os.path.dirname(os.path.abspath(__file__))).parent

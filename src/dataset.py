@@ -3,7 +3,7 @@ import random
 import pandas as pd
 from torch.utils.data import Dataset as TorchDataset, DataLoader
 from datasets import Dataset, DatasetDict
-from src.config import ALL_REWRITE_INTENT_JSON, DATA_PATH
+from config import ALL_REWRITE_INTENT_JSON, DATA_PATH
 
 
 class DataBuilder:
@@ -31,16 +31,23 @@ class DataBuilder:
         return unrelated_data
 
     def __contact_data(self):
-        data = self.__build_real_data() + self.__build_fake_data()
-        print("Number of Real example", len(self.__build_real_data()))
-        print("Number of Fake example", len(data) - len(self.__build_real_data()))
-        data = sorted(data, key=lambda x: x['name'])
-        return data
+        true_data = self.__build_real_data()
+        fake_data = self.__build_fake_data()
+        data = true_data + fake_data
+        print("Number of Real example", len(true_data))
+        print("Number of Fake example", len(fake_data))
+        return sorted(data, key=lambda x: x['name'])
 
     @staticmethod
     def __filter_data(selects, candidates):
         """
-        检查candidates中是否含有selects中的元素,若包含则将该元素移动到selects中
+        The candidates are checked to see if the element in selects exists, and if so, the element is moved to selects.
+        Args:
+            selects: selected data
+            candidates: candidate data
+
+        Returns:
+
         """
         for candidate in candidates:
             matched_item = [item for item in selects if item["name"] == candidate['name']]
@@ -50,6 +57,14 @@ class DataBuilder:
         return selects, candidates
 
     def build_dataset(self, save_to_disk=False):
+        """
+        The dataset is divided into training and test sets, and the data is saved to the disk.
+        Args:
+            save_to_disk: whether to save the data to the disk
+
+        Returns:
+
+        """
         data = self.__contact_data()
         random.shuffle(data)
         split_radio = 0.8
@@ -66,6 +81,9 @@ class DataBuilder:
 
 
 class SentenceDataset(TorchDataset):
+    """
+    The dataset is used to load the data in the form of a sentence.
+    """
     def __init__(self, dataset):
         self.dataset = dataset
 
@@ -77,6 +95,11 @@ class SentenceDataset(TorchDataset):
 
 
 def get_dataloader():
+    """
+    Get the training and test data loader.
+    Returns:
+
+    """
     batch_size = 1
     train_dataset = pd.read_csv(f"{DATA_PATH}/dataset/train.csv", encoding="utf-8-sig").values.tolist()
     train_dataloader = DataLoader(SentenceDataset(train_dataset), batch_size=batch_size, shuffle=True)
@@ -91,5 +114,6 @@ if __name__ == '__main__':
 
     train_dataloader, test_dataloader = get_dataloader()
     for intent, description, label in train_dataloader:
-        print("intent, description, label", intent, description, label)
+        print("intent, description, label")
+        print(intent, description, label)
         break
