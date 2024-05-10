@@ -37,8 +37,3 @@ def get_device(name=None):
     if name:
         device = torch.device(name)
     return device
-
-
-if __name__ == '__main__':
-    print(get_now_datetime())
-    print(get_device())

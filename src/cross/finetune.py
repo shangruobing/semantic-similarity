@@ -1,12 +1,10 @@
-import sys
-
-sys.path.append("..")
 import torch
 import torch.nn as nn
 from transformers import BertTokenizer, BertModel
+
 from src.config import SIMILARITY_MODEL
-from src.utils import get_device
-from src.trainer import Trainer
+from src.core.utils import get_device
+from src.core.trainer import Trainer
 
 
 class CrossBertModel(nn.Module):
@@ -48,7 +46,3 @@ def train():
     cross_model = CrossBertModel(tokenizer, model)
     trainer = Trainer(model=cross_model, model_name="cross")
     trainer.train()
-
-
-if __name__ == '__main__':
-    train()

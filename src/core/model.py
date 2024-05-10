@@ -1,7 +1,8 @@
 from typing import Tuple
-from utils import get_device
 from abc import ABC, abstractmethod
 from transformers import BertTokenizer, BertForSequenceClassification
+
+from src.core.utils import get_device
 
 
 class FineTuneModel(ABC):

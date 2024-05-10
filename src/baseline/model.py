@@ -1,11 +1,8 @@
-import sys
-
-sys.path.append("..")
 import torch
 import torch.nn.functional as F
 from transformers import BertTokenizer, BertModel
 
-from src.model import FineTuneModel
+from src.core.model import FineTuneModel
 
 
 class BaselineModel(FineTuneModel):
@@ -34,11 +31,3 @@ class BaselineModel(FineTuneModel):
                 sentence_embeddings[1].unsqueeze(0)
             )
             return 1 if cos_similarities.item() > threshold else 0, cos_similarities.item()
-
-
-if __name__ == '__main__':
-    from src.config import SIMILARITY_MODEL
-
-    model = BaselineModel(model_path=SIMILARITY_MODEL)
-    corpus = ("下雨就打车去苏州大学", "将ABC添加到我的歌单")
-    print(model.classify(*corpus))

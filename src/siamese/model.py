@@ -1,11 +1,9 @@
-import sys
-
-sys.path.append("..")
-from transformers import BertTokenizer, BertModel
 import torch
+from transformers import BertTokenizer, BertModel
+
 from src.siamese.finetune import SiameseBertModel
-from src.model import FineTuneModel
-from src.utils import get_device
+from src.core.model import FineTuneModel
+from src.core.utils import get_device
 
 
 class SiameseFineTuneModel(FineTuneModel):
@@ -24,11 +22,3 @@ class SiameseFineTuneModel(FineTuneModel):
     def _fit(self, sentence, candidate_sentence, threshold=0.5):
         outputs = self.model(sentence, candidate_sentence)
         return 1 if outputs.item() > threshold else 0, outputs.item()
-
-
-if __name__ == '__main__':
-    from src.config import SIMILARITY_MODEL, SIAMESE_MODEL_STATE_DICT
-
-    corpus = ["下雨就打车去苏州大学", "将ABC添加到我的歌单"]
-    model = SiameseFineTuneModel(model_path=SIMILARITY_MODEL, state_dict_path=SIAMESE_MODEL_STATE_DICT)
-    print(model.classify(*corpus))

@@ -4,9 +4,10 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 from tabulate import tabulate
-from config import FINE_TUNE
-from utils import get_device
-from dataset import get_dataloader
+
+from src.config import FINE_TUNE
+from src.core.utils import get_device
+from src.core.dataset import get_dataloader
 
 
 class Trainer:

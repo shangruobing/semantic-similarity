@@ -1,12 +1,10 @@
-import sys
-
-sys.path.append("..")
 import torch
 import torch.nn as nn
 from transformers import BertTokenizer, BertModel
+
 from src.config import SIMILARITY_MODEL
-from src.utils import get_device
-from src.trainer import Trainer
+from src.core.utils import get_device
+from src.core.trainer import Trainer
 
 
 class SiameseBertModel(nn.Module):
@@ -52,7 +50,3 @@ def train():
     siamese_model = SiameseBertModel(tokenizer, model)
     trainer = Trainer(model=siamese_model, model_name="siamese")
     trainer.train()
-
-
-if __name__ == '__main__':
-    train()

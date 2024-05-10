@@ -43,12 +43,12 @@ pip install -r requirements.txt
 cd src
 # prepare the dataset
 python dataset.py
-# fine-tune the siamese model
-python siamese/finetune.py
-# fine-tune the cross model
-python cross/finetune.py
+# fine-tune the model
+python finetune.py
 # evaluate the model
-python evaluator.py
+python evaluate.py
+# inference
+python inference.py
 ```
 
 ## Background

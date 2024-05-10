@@ -1,12 +1,9 @@
 import os
-
 import pandas as pd
 from tqdm import tqdm
 from sklearn.metrics import confusion_matrix, accuracy_score
-from baseline.model import BaselineModel
-from cross.model import CrossFineTuneModel
-from model import FineTuneModel
-from siamese.model import SiameseFineTuneModel
+
+from src.core.model import FineTuneModel
 
 
 class Evaluator:
@@ -54,24 +51,3 @@ class Evaluator:
         print("Confusion Matrix:")
         print(confusion_matrix(y_true=labels, y_pred=predicts))
         print("Accuracy:", accuracy_score(y_true=labels, y_pred=predicts))
-
-
-if __name__ == '__main__':
-    from config import DATA_PATH, FOLDER_PATH, SIMILARITY_MODEL, SIAMESE_MODEL_STATE_DICT, CROSS_MODEL_STATE_DICT
-
-    data_path = DATA_PATH / "dataset/test.csv"
-
-    print("=============BaseLineModel=============")
-    evaluator = Evaluator(data_path=data_path, folder_path=FOLDER_PATH, model_name="baseline")
-    fineTuneModel = BaselineModel(model_path=SIMILARITY_MODEL)
-    evaluator.evaluate(fineTuneModel)
-
-    print("===========CrossFineTuneModel===========")
-    evaluator = Evaluator(data_path=data_path, folder_path=FOLDER_PATH, model_name="cross")
-    model = CrossFineTuneModel(model_path=SIMILARITY_MODEL, state_dict_path=CROSS_MODEL_STATE_DICT)
-    evaluator.evaluate(model)
-
-    print("==========SiameseFineTuneModel==========")
-    evaluator = Evaluator(data_path=data_path, folder_path=FOLDER_PATH, model_name="siamese")
-    model = SiameseFineTuneModel(model_path=SIMILARITY_MODEL, state_dict_path=SIAMESE_MODEL_STATE_DICT)
-    evaluator.evaluate(model)
