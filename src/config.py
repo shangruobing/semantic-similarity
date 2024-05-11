@@ -13,6 +13,5 @@ ALL_REWRITE_INTENT_JSON = DATA_PATH / Path("json/rewrite_intent.json")
 
 # 本地模型路径
 SIMILARITY_MODEL = str(ROOT_PATH / Path("models/similarity/"))
-FINE_TUNE = ROOT_PATH / Path("models/" + get_now_datetime())
 CROSS_MODEL_STATE_DICT = str(ROOT_PATH / Path("models/cross/pytorch_model.pth"))
 SIAMESE_MODEL_STATE_DICT = str(ROOT_PATH / Path("models/siamese/pytorch_model.pth"))

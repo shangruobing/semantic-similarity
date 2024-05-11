@@ -9,18 +9,14 @@ from src.core.model import FineTuneModel
 class Evaluator:
     def __init__(self, data_path, folder_path, model_name):
         self.dataset = pd.read_csv(data_path).values
-        self.folder_path = folder_path
+        self.folder_path = folder_path / "evaluate"
         self.model_name = model_name
-        self.file_path = f"{self.folder_path}/{self.model_name}.csv"
+        self.file_path = self.folder_path / f"{self.model_name}.csv"
 
     def _init_writer(self):
-        if not os.path.exists(self.folder_path):
-            os.mkdir(self.folder_path)
-        if os.path.exists(self.file_path):
-            writer = pd.read_csv(self.file_path, encoding="utf-8-sig")
-        else:
-            print(f"The {self.file_path} does not exist, a new file has been created.")
-            writer = pd.DataFrame(columns=["name", "rewrite", "label", "predict", "confidence"])
+        os.makedirs(self.folder_path, exist_ok=True)
+        # print(f"The {self.file_path} does not exist, a new file has been created.")
+        writer = pd.DataFrame(columns=["name", "rewrite", "label", "predict", "confidence"])
         return writer
 
     def evaluate(self, model: FineTuneModel):

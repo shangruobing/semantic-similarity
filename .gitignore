@@ -1,9 +1,5 @@
 .idea
 
-models
-
-dataset
-
-result
-
 *.csv
+
+*.pth

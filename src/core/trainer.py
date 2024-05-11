@@ -5,7 +5,7 @@ import torch.nn as nn
 from tqdm import tqdm
 from tabulate import tabulate
 
-from src.config import FINE_TUNE
+from src.config import FOLDER_PATH
 from src.core.utils import get_device
 from src.core.dataset import get_dataloader
 
@@ -17,9 +17,9 @@ class Trainer:
             model,
             model_name,
             criterion=nn.BCELoss(),
-            num_epochs=10,
+            num_epochs=1,
             learning_rate=1e-5,
-            save_path=FINE_TUNE
+            save_path=FOLDER_PATH
     ):
         self.device = get_device()
         self.model = model.to(self.device)
@@ -28,8 +28,8 @@ class Trainer:
         self.num_epochs = num_epochs
         self.learning_rate = learning_rate
         self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.learning_rate)
-        self.save_path = save_path
         self.train_dataloader, self.test_dataloader = get_dataloader()
+        self._init_directory(root=save_path)
 
     def train(self):
         for epoch in tqdm(iterable=range(1, self.num_epochs + 1), desc="Training", disable=True):
@@ -49,14 +49,14 @@ class Trainer:
 
             self._evaluate(epoch)
 
-        self._save_model()
+        torch.save(self.model.state_dict(), self.state_dict_path)
 
     def _evaluate(self, epoch):
         self.model.eval()
         with (
             torch.no_grad(),
-            open(self.model_name + "_log.csv", "w", encoding="utf-8-sig") as log,
-            open(self.model_name + "_metrics.csv", "w", encoding="utf-8-sig") as metrics
+            open(self.log_path, "w", encoding="utf-8-sig") as log,
+            open(self.metrics_path, "w", encoding="utf-8-sig") as metrics
         ):
             log_writer = csv.writer(log)
             metrics_writer = csv.writer(metrics)
@@ -90,7 +90,12 @@ class Trainer:
         f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
         return round(accuracy, 2), round(precision, 2), round(recall, 2), round(f1, 2)
 
-    def _save_model(self):
-        if not os.path.exists(self.save_path):
-            os.makedirs(self.save_path)
-        torch.save(self.model.state_dict(), self.save_path / f'{self.model_name}_pytorch_model.pth')
+    def _init_directory(self, root):
+        self.log_directory = root / "logs"
+        self.log_path = self.log_directory / (self.model_name + "_log.csv")
+        self.metrics_path = self.log_directory / (self.model_name + "_metrics.csv")
+        self.checkpoint_directory = root / "models" / self.model_name
+        self.state_dict_path = self.checkpoint_directory / 'pytorch_model.pth'
+        os.makedirs(root, exist_ok=True)
+        os.makedirs(self.log_directory, exist_ok=True)
+        os.makedirs(self.checkpoint_directory, exist_ok=True)
